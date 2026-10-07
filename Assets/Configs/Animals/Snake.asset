@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Snake
   m_EditorClassIdentifier: ZooWorld.Game::ZooWorld.Game.Game.Animals.AnimalConfig
   prefab:
-    m_AssetGUID: 
+    m_AssetGUID: 09ba73cc68ad89c4f89eb9c3cfccdf6d
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

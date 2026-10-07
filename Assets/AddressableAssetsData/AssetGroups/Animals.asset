@@ -15,14 +15,24 @@ MonoBehaviour:
   m_GroupName: Animals
   m_GUID: b8320463d64aa284280b2c1b2e307470
   m_SerializeEntries:
+  - m_GUID: 09ba73cc68ad89c4f89eb9c3cfccdf6d
+    m_Address: Prefabs/Snake
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0ef8d524430d0eb4ca5e5d5482249888
+    m_Address: Prefabs/Frog
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9a0b5509636f54c45978157a991599c7
-    m_Address: Assets/Configs/Animals/Snake.asset
+    m_Address: Animals/Snake
     m_ReadOnly: 0
     m_SerializedLabels:
     - animal
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ff31cc0901b3405449764802e503fc17
-    m_Address: Assets/Configs/Animals/Frog.asset
+    m_Address: Animals/Frog
     m_ReadOnly: 0
     m_SerializedLabels:
     - animal
