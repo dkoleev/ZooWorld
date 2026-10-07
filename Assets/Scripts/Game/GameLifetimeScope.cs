@@ -16,9 +16,8 @@ namespace ZooWorld.Game.Game
         
         protected override void Configure(IContainerBuilder builder)
         {
-            var messagePipe = builder.RegisterMessagePipe();
-            builder.RegisterMessageBroker<AnimalDiedEvent>(messagePipe);
-            builder.RegisterMessageBroker<AnimalAteEvent>(messagePipe);
+            builder.RegisterInstance(settings);
+            builder.RegisterComponent(gameCamera);
 
             builder.Register<IRandom, UnityRandom>(Lifetime.Singleton);
             builder.Register<IPlayArea, CameraPlayArea>(Lifetime.Singleton);
@@ -30,6 +29,10 @@ namespace ZooWorld.Game.Game
             builder.RegisterEntryPoint<AnimalSpawner>().AsSelf();
             builder.RegisterEntryPoint<AnimalSimulation>();
             builder.RegisterEntryPoint<GameBootstrap>();
+            
+            var messagePipe = builder.RegisterMessagePipe();
+            builder.RegisterMessageBroker<AnimalDiedEvent>(messagePipe);
+            builder.RegisterMessageBroker<AnimalAteEvent>(messagePipe);
             
             // Statistics count from the first death whether or not any UI ever asks for them.
             builder.RegisterBuildCallback(resolver => resolver.Resolve<DeathStats>());
