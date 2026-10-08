@@ -15,6 +15,6 @@ MonoBehaviour:
   minSpawnInterval: 1
   maxSpawnInterval: 2
   maxAlive: 200
-  spawnHeight: 1
-  wanderInterval: 3
-  playAreaMargin: 2
+  spawnHeight: 0
+  wanderInterval: {x: 2, y: 4}
+  playAreaMargin: 4

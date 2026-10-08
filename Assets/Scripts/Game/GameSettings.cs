@@ -13,7 +13,7 @@ namespace ZooWorld.Game
         [SerializeField, Min(0f)] private float spawnHeight = 1f;
 
         [Header("Wandering")]
-        [SerializeField, Min(0.1f)] private float wanderInterval = 3f;
+        [SerializeField] private Vector2 wanderInterval;
         [Tooltip("How far inside the screen edge animals turn back, in world units.")]
         [SerializeField, Min(0f)] private float playAreaMargin = 2.5f;
 
@@ -21,7 +21,7 @@ namespace ZooWorld.Game
         public float MaxSpawnInterval => maxSpawnInterval;
         public int MaxAlive => maxAlive;
         public float SpawnHeight => spawnHeight;
-        public float WanderInterval => wanderInterval;
+        public Vector2 WanderInterval => wanderInterval;
         public float PlayAreaMargin => playAreaMargin;
 
         private void OnValidate() => maxSpawnInterval = Mathf.Max(maxSpawnInterval, minSpawnInterval);

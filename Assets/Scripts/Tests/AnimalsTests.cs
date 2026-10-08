@@ -14,7 +14,7 @@ namespace ZooWorld.Tests
         {
             var body = new FakeBody();
             var movement = new FakeMovement();
-            var wander = new WanderDirection(new FakePlayArea(), new FakeRandom(), 1.0f);
+            var wander = new WanderDirection(new FakePlayArea(), new FakeRandom(), new Vector2(1f, 1f));
             var animal = new Animal(0, Diets.Prey, body, movement, wander);
             
             animal.Tick(0.02f);

@@ -7,11 +7,11 @@ namespace ZooWorld.Core
     {
         private readonly IPlayArea _area;
         private readonly IRandom _random;
-        private readonly float _interval;
+        private readonly Vector2 _interval;
         private Vector3 _current;
         private float _timeLeft;
 
-        public WanderDirection(IPlayArea area, IRandom random, float interval)
+        public WanderDirection(IPlayArea area, IRandom random, Vector2 interval)
         {
             _area = area;
             _random = random;
@@ -27,7 +27,7 @@ namespace ZooWorld.Core
                 toCentre.y = 0f;
                 _current = toCentre.normalized;
                 // Restarting the timer keeps the animal walking inward for a while after it is back.
-                _timeLeft = _interval;
+                _timeLeft = _random.Range(_interval.x, _interval.y);
                 
                 return _current;
             }
@@ -44,7 +44,7 @@ namespace ZooWorld.Core
             //generating a random angle. 2f * Mathf.PI = 6.28318 represents a full $360 circle.
             var angle = _random.Range(0f, 2f * Mathf.PI);
             _current = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
-            _timeLeft = _interval;
+            _timeLeft = _random.Range(_interval.x, _interval.y);
         }
     }
 }
