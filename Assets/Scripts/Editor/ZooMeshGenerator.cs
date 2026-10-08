@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ZooWorld.Editor.Editor
+namespace ZooWorld.Editor
 {
     internal static class ZooMeshGenerator
     {

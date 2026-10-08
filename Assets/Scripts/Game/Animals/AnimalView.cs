@@ -45,6 +45,7 @@ namespace ZooWorld.Game.Animals
             _pool = pool;
             // Moved while inactive, so the rigidbody wakes up already in place.
             transform.SetPositionAndRotation(position, Quaternion.identity);
+            visual.localRotation = Quaternion.identity;
             gameObject.SetActive(true);
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;

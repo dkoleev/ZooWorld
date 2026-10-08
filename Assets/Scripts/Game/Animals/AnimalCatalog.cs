@@ -23,7 +23,7 @@ namespace ZooWorld.Game.Animals
                 var configs = await _handle.ToUniTask(cancellationToken: cancellation);
                 return new List<AnimalConfig>(configs);
             }
-            catch (Exception exception) when (!(exception is OperationCanceledException))
+            catch (Exception exception) when (exception is not OperationCanceledException)
             {
                 Debug.LogException(exception);
                 return Array.Empty<AnimalConfig>();

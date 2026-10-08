@@ -6,7 +6,7 @@ using ZooWorld.Tests.Utils;
 
 namespace ZooWorld.Tests
 {
-    public sealed class LinearMovementTest
+    public sealed class LinearMovementTests
     {
         private static LinearMovement Movement() => new(speed: 3f, acceleration: 10f);
 

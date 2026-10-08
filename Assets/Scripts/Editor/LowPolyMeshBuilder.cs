@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace ZooWorld.Editor.Editor
+namespace ZooWorld.Editor
 {
     /// <summary>
     /// Collects flat-shaded, vertex-coloured triangles. Every triangle owns its three vertices,
