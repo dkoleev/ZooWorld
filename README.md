@@ -15,6 +15,7 @@ A small Unity simulation. Every 1–2 seconds an animal appears on a top-down fi
 - [The brief, point by point](#the-brief-point-by-point)
 - [Adding a new animal](#adding-a-new-animal)
 - [Architecture](#architecture)
+- [Shaders](#shaders)
 - [Tech stack](#tech-stack)
 - [Decisions and trade-offs](#decisions-and-trade-offs)
 - [Performance notes](#performance-notes)
@@ -209,6 +210,84 @@ Views are passive: they expose setters and events and decide nothing. The same s
 
 ![Russian locale](Docs/images/gameplay-ru.png)
 
+## Shaders
+
+Everything on screen except the UI is drawn by one hand-written URP shader, `ZooWorld/Toon` (`Assets/Art/Shaders/Toon.shader`). It is plain HLSL, not Shader Graph, and uses no textures: the albedo is the vertex colour baked by the mesh generator, multiplied by `_BaseColor`.
+
+| Material | Used by | Differs in |
+|---|---|---|
+| `Toon` | Animals, trees, rocks, bushes | Defaults |
+| `ToonGround` | Ground | Outline width 0, rim strength 0 |
+| `ToonSnake` | Snake | Wiggle amplitude 0.04, frequency 6 |
+
+### Passes
+
+| Pass | LightMode | What it does |
+|---|---|---|
+| `ForwardLit` | `UniversalForward` | Two-band lighting, rim light, fog |
+| `Outline` | `SRPDefaultUnlit` | Inverted hull: front faces culled, back faces pushed outward |
+| `ShadowCaster` | `ShadowCaster` | Main-light and punctual-light shadows, with URP's shadow bias |
+| `DepthOnly` | `DepthOnly` | Depth prepass |
+| `DepthNormals` | `DepthNormals` | World normals for the renderer's ambient occlusion feature |
+
+All material properties sit in one `UnityPerMaterial` buffer declared in a shared `HLSLINCLUDE` block, which is what keeps every pass SRP Batcher compatible.
+
+### Lighting
+
+The lit pass reads only the main light and splits the surface into two bands:
+
+```hlsl
+half lit = smoothstep(_ShadeThreshold - _ShadeSoftness, _ShadeThreshold + _ShadeSoftness, dot(N, L));
+lit *= smoothstep(0.5 - _ShadeSoftness, 0.5 + _ShadeSoftness, shadowAttenuation);
+color = albedo * lightColor * lerp(_ShadeColor, 1, lit);
+```
+
+The shaded band is a tint, not a darkening, so shadows lean blue instead of grey. Received shadows go through the same threshold as the light direction, so a cast shadow has the same hard edge as the terminator.
+
+The rim is `1 - dot(N, V)` cut by a 0.05-wide `smoothstep` at `_RimThreshold`, and it is multiplied by `lit`, so it shows on the lit side only.
+
+### Outline
+
+The outline pass moves each vertex along its normal by `_OutlineWidth` in world space, so the line has the same thickness whatever the object's scale.
+
+The meshes are flat-shaded, which means every face has its own copy of each vertex with its own normal. Pushing those apart would tear the hull open at every edge. `LowPolyMeshBuilder` therefore bakes a second, smoothed set of normals into UV channel 3, and the outline pass uses that one. A mesh without it (length near zero) falls back to its ordinary normals.
+
+### Snake wiggle
+
+The snake has no bones and no animation clip. Its mesh is a straight tube, and the vertex stage bends it into a travelling sine:
+
+```hlsl
+void ApplyWiggle(inout float3 positionOS, inout float3 normalOS)
+{
+    float s, c;
+    sincos((_WigglePhase + positionOS.z) * _WiggleFrequency, s, c);
+    positionOS.x += _WiggleAmplitude * s;
+    // Inverse transpose of the shear x += f(z).
+    normalOS.z -= _WiggleAmplitude * _WiggleFrequency * c * normalOS.x;
+    normalOS = normalize(normalOS);
+}
+```
+
+- **One function, five passes.** It runs first in every vertex stage, so the outline, the shadow, the depth prepass and the ambient occlusion normals all bend with the body. The outline pass feeds it the smoothed normal.
+- **Normals.** The displacement is a shear `x' = x + f(z)`, so normals are transformed by the inverse transpose of its Jacobian: only `n.z` changes, by `-f'(z) * n.x`. Without this the light band would stay where it was on the straight tube.
+- **Phase is distance, not time.** `_WigglePhase` is the distance the snake has travelled nose-first, in world units. The wave therefore stays still relative to the ground while the body slides through it, the wiggle speed always matches the movement speed, and a snake that stops freezes.
+- **Where the phase comes from.** `WigglePhase` (on the snake's mesh object) adds `dot(position - lastPosition, transform.forward)` every `LateUpdate` and writes the total through a `MaterialPropertyBlock`. It resets its reference position in `OnEnable`, so a pooled snake respawning elsewhere does not count the jump as travel.
+- **Opt-in.** `_WiggleAmplitude` defaults to 0, so the other materials pay for one `sincos` and are otherwise untouched.
+
+With the shipped values the wavelength is `2π / 6 ≈ 1.05` units against a body about 1.7 long, so roughly one and a half waves are visible at once.
+
+Known limits:
+
+| Limit | Why it is acceptable here |
+|---|---|
+| A property block takes the snake's renderer out of the SRP Batcher | A handful of snakes; every other object still batches |
+| The cross-section is sheared, not rotated, so the body thins by `cos(atan(A·k))` on the steepest part | About 3% at amplitude 0.04 and frequency 6 |
+| Mesh bounds are not enlarged for the displacement | 0.04 units sideways on a body 0.3 wide; no visible culling error |
+| The collider does not bend | Animals collide as spheres anyway |
+| The bend is only as smooth as the tube: 12 segments | Matches the low-poly look |
+
+An earlier version computed the phase in the shader as the object's world position projected onto its forward axis. That needed no C# and kept the batcher, but the phase jumped whenever the snake turned, by an amount that grew with its distance from the world origin.
+
 ## Tech stack
 
 | Tool | Role here | Why this one |
@@ -221,7 +300,7 @@ Views are passive: they expose setters and events and decide nothing. The same s
 | **DOTween** | "Tasty!" pop and fade | A one-line sequence instead of a hand-written animation |
 | **uGUI + TextMeshPro** | HUD | Required by the brief |
 | **Unity Test Framework** | 35 EditMode tests on the logic | The logic is plain C#, so the tests need no scene |
-| **URP + custom HLSL shader** | Two-tone cel shading, rim light, outline | A small hand-written shader; SRP Batcher compatible |
+| **URP + custom HLSL shader** | Two-tone cel shading, rim light, outline, snake wiggle | A small hand-written shader; SRP Batcher compatible. See [Shaders](#shaders) |
 
 ## Decisions and trade-offs
 
@@ -249,7 +328,7 @@ Views are passive: they expose setters and events and decide nothing. The same s
 - **Ground check on demand.** A frog casts one ray when a jump is due, not every frame.
 - **Layer collision matrix.** Animals test only against animals and the ground.
 - **Two canvases.** Labels that move every frame do not make the static counters rebuild.
-- **SRP Batcher.** One shader and two materials cover every object in the scene; colour comes from vertex data.
+- **SRP Batcher.** One shader and three materials cover every object in the scene; colour comes from vertex data. Snakes are the exception: each carries a per-renderer wiggle phase, which takes it out of the batcher.
 - **Optional population cap** in `GameSettings` (200 by default, 0 turns it off). It is a safety net well above what the field settles at; if it is ever reached, spawning pauses and a warning says so.
 
 ## Tests
@@ -277,15 +356,18 @@ Physics and views are checked by running the scene.
 ## Project layout
 
 ```
-Assets/ZooWorld/
-├── Core/       pure C#: Animals, Movement, Spawning, Stats, World
-├── Game/       views, ScriptableObject configs, factory, pools, GameLifetimeScope
-├── UI/         presenters, views, UiLifetimeScope
-├── Editor/     LowPolyMeshBuilder, ZooMeshGenerator
-├── Tests/      EditMode tests and fakes
-├── Configs/    GameSettings, diet and movement assets, one AnimalConfig per species
-├── Prefabs/    animals, UI label
-├── Art/        generated meshes, materials, Toon shader
+Assets/
+├── Scripts/
+│   ├── Core/       pure C#: Animals, Events, Movement, World
+│   ├── Game/       views, ScriptableObject configs, factory, pools, GameLifetimeScope
+│   ├── UI/         presenters, views, UiLifetimeScope
+│   ├── Editor/     LowPolyMeshBuilder, ZooMeshGenerator, prop placer window
+│   └── Tests/      EditMode tests and fakes
+├── Configs/        GameSettings, diet and movement assets, one AnimalConfig per species
+├── Prefabs/        animals, UI label
+├── Art/            generated meshes, materials, Toon shader
+├── Physics/        the animals' physics material
+├── Settings/       URP assets and renderers
 ├── Localization/
 └── Scenes/Game.unity
 ```
@@ -293,7 +375,7 @@ Assets/ZooWorld/
 ## Running it
 
 1. Open the project with **Unity 6000.6.3f1**. Packages restore on first open.
-2. Open `Assets/ZooWorld/Scenes/Game.unity` and press Play.
+2. Open `Assets/Scenes/Game.unity` and press Play.
 
 In the Editor, Addressables load straight from the asset database, so no content build is needed. Before a player build, build the Addressables content (**Window ▸ Asset Management ▸ Addressables ▸ Groups ▸ Build**) unless building it with the player is enabled.
 
