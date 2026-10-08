@@ -11,12 +11,18 @@ namespace ZooWorld.UI
     public class UiLifetimeScope : LifetimeScope
     {
         [SerializeField] private DeathCounterView deathCounter;
+        [SerializeField] private RectTransform labelsRoot;
+        [SerializeField] private TastyLabelView tastyLabelPrefab;
 
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponent(deathCounter);
 
             builder.RegisterEntryPoint<DeathCounterPresenter>();
+
+            builder.RegisterEntryPoint<TastyLabelPresenter>()
+                .WithParameter(tastyLabelPrefab)
+                .WithParameter(labelsRoot);
         }
     }
 }
