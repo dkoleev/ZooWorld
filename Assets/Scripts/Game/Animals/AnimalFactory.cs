@@ -45,9 +45,16 @@ namespace ZooWorld.Game.Animals
 
             var view = pool.Get();
             var wander = new WanderDirection(_area, _random, _settings.WanderInterval);
-            var animal = new Animal(_nextId++, config.Diet, view, config.Movement.Create(), wander);
+            var animal = new Animal(_nextId++, config.name, config.Diet, view, config.Movement.Create(), wander);
             view.Spawn(animal, _world, pool, position);
             _world.Add(animal);
+        }
+
+        /// <summary>Loads every species up front, so later spawns finish without waiting for Addressables.</summary>
+        public async UniTask PrewarmAsync(IReadOnlyList<AnimalConfig> configs)
+        {
+            foreach (var config in configs)
+                await GetPoolAsync(config);
         }
 
         public void Dispose()

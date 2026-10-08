@@ -20,6 +20,7 @@ namespace ZooWorld.Core
         }
 
         public int AliveCount => _animals.Count;
+        public IReadOnlyList<Animal> Animals => _animals;
 
         public void Add(Animal animal) => _animals.Add(animal);
 

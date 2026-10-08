@@ -7,6 +7,9 @@ namespace ZooWorld.Core.Animals
         /// <summary>Spawn sequence number: the lower it is, the longer the animal has lived.</summary>
         public int Id { get; }
 
+        /// <summary>Which kind of animal this is, e.g. "Frog". Two species may share a diet.</summary>
+        public string Species { get; }
+
         public IDiet Diet { get; }
         public bool IsAlive { get; private set; } = true;
         public IAnimalBody Body => _body;
@@ -15,9 +18,10 @@ namespace ZooWorld.Core.Animals
         private readonly IMovement _movement;
         private readonly WanderDirection _wander;
 
-        public Animal(int id, IDiet diet, IAnimalBody body, IMovement movement, WanderDirection wander)
+        public Animal(int id, string species, IDiet diet, IAnimalBody body, IMovement movement, WanderDirection wander)
         {
             Id = id;
+            Species = species;
             Diet = diet;
             _body = body;
             _movement = movement;

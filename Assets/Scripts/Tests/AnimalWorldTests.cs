@@ -21,11 +21,23 @@ namespace ZooWorld.Tests
             _world = new AnimalWorld(_died, _ate);
         }
 
-        private Animal Add(int id, IDiet diet, IMovement movement = null)
+        private Animal Add(int id, IDiet diet, IMovement movement = null, string species = "animal")
         {
-            var animal = Utils.CommonTestUtils.Create(id, diet, movement);
+            var animal = Utils.CommonTestUtils.Create(id, diet, movement, species);
             _world.Add(animal);
             return animal;
+        }
+
+        [Test]
+        public void AnimalsListsOnlyTheLivingWithTheirSpecies()
+        {
+            var frog = Add(0, Diets.Prey, species: "Frog");
+            var snake = Add(1, Diets.Predator, species: "Snake");
+
+            _world.Collide(frog, snake);
+
+            Assert.That(_world.Animals, Is.EqualTo(new[] { snake }));
+            Assert.That(_world.Animals[0].Species, Is.EqualTo("Snake"));
         }
 
         [Test]

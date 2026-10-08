@@ -1,7 +1,13 @@
 {
     "name": "ZooWorld.Editor",
     "rootNamespace": "ZooWorld",
-    "references": [],
+    "references": [
+        "GUID:e1c2a05e2fa0b7748b818c087b19a200",
+        "GUID:c919e9789deb05f49956494aa03807a2",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:08b38f39e2d9e594389b7a4cf4c2c338",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
     "includePlatforms": [
         "Editor"
     ],

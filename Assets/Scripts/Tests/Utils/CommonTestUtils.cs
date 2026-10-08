@@ -12,7 +12,7 @@ namespace ZooWorld.Tests.Utils
         public static void AreEqual(Vector3 expected, Vector3 actual) =>
             Assert.That(Vector3.Distance(expected, actual), Is.LessThan(1e-4f), $"Expected {expected:F4} but was {actual:F4}");
         
-        public static Animal Create(int id, IDiet diet, IMovement movement = null) =>
-            new(id, diet, new FakeBody(), movement ?? new FakeMovement(), new WanderDirection(new FakePlayArea(), new FakeRandom(), new Vector2(1f, 1f)));
+        public static Animal Create(int id, IDiet diet, IMovement movement = null, string species = "animal") =>
+            new(id, species, diet, new FakeBody(), movement ?? new FakeMovement(), new WanderDirection(new FakePlayArea(), new FakeRandom(), new Vector2(1f, 1f)));
     }
 }

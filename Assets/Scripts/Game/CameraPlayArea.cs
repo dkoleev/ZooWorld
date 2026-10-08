@@ -14,6 +14,16 @@ namespace ZooWorld.Game
                 return _center;
             }
         }
+
+        /// <summary>Width (x) and depth (y) of the area in world units.</summary>
+        public Vector2 Size
+        {
+            get
+            {
+                Refresh();
+                return new Vector2(_halfWidth, _halfDepth) * 2f;
+            }
+        }
         
         private readonly Camera _camera;
         private readonly float _margin;

@@ -32,12 +32,16 @@ namespace ZooWorld.Game.Animals
             _timer = new SpawnTimer(random, settings.MinSpawnInterval, settings.MaxSpawnInterval);
         }
 
+        public IReadOnlyList<AnimalConfig> Configs => _configs;
+
         /// <summary>Spawning stays idle until the catalog hands over the species.</summary>
         public void Begin(IReadOnlyList<AnimalConfig> configs) => _configs = configs;
 
-        public void Tick()
+        public void Tick() => Step(Time.deltaTime);
+
+        public void Step(float deltaTime)
         {
-            if (_configs.Count == 0 || !_timer.Tick(Time.deltaTime))
+            if (_configs.Count == 0 || !_timer.Tick(deltaTime))
                 return;
             if (_settings.MaxAlive > 0 && _world.AliveCount >= _settings.MaxAlive)
             {
