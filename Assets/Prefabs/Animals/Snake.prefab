@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Snake
       objectReference: {fileID: 0}
+    - target: {fileID: 3331195965255976330, guid: 4706c57b4ef5c3c4fb46059c9ce280be, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0825416054f9a7b498044d20d90ac368, type: 2}
     - target: {fileID: 5614560881796651339, guid: 4706c57b4ef5c3c4fb46059c9ce280be, type: 3}
       propertyPath: m_Mesh
       value: 

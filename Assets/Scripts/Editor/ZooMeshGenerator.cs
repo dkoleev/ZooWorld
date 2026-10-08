@@ -58,7 +58,7 @@ namespace ZooWorld.Editor
                 // 0 is the tail tip, 1 is the neck; the body thickens toward the head.
                 var t = i / (float)segments;
                 var radius = Mathf.Lerp(0.03f, 0.11f, Mathf.Sin(t * Mathf.PI * 0.5f));
-                centers.Add(new Vector3(Mathf.Sin(t * Mathf.PI * 2f) * 0.16f, radius, Mathf.Lerp(-0.85f, 0.5f, t)));
+                centers.Add(new Vector3(0f, radius, Mathf.Lerp(-0.85f, 0.5f, t)));
                 radii.Add(radius);
             }
 

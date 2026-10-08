@@ -11,6 +11,8 @@ Shader "ZooWorld/Toon"
         _RimStrength ("Rim Strength", Range(0, 1)) = 0.3
         _OutlineColor ("Outline Color", Color) = (0.13, 0.1, 0.16, 1)
         _OutlineWidth ("Outline Width (world units)", Range(0, 0.1)) = 0.02
+        _WiggleAmplitude ("Wiggle Amplitude", Range(0, 0.5)) = 0
+        _WiggleFrequency ("Wiggle Frequency (rad per unit)", Range(0, 20)) = 4.65
     }
 
     SubShader
@@ -31,7 +33,23 @@ Shader "ZooWorld/Toon"
             half _RimThreshold;
             half _RimStrength;
             half _OutlineWidth;
+            half _WiggleAmplitude;
+            float _WiggleFrequency;
         CBUFFER_END
+
+        // Bends the mesh sideways along a sine that stands still in the world: the phase comes from
+        // distance travelled, so the body slides through the wave and freezes when the animal stops.
+        void ApplyWiggle(inout float3 positionOS, inout float3 normalOS)
+        {
+            float4x4 objectToWorld = GetObjectToWorldMatrix();
+            float travelled = dot(objectToWorld._m03_m13_m23, normalize(objectToWorld._m02_m12_m22));
+            float s, c;
+            sincos((travelled + positionOS.z) * _WiggleFrequency, s, c);
+            positionOS.x += _WiggleAmplitude * s;
+            // Inverse transpose of the shear x += f(z).
+            normalOS.z -= _WiggleAmplitude * _WiggleFrequency * c * normalOS.x;
+            normalOS = normalize(normalOS);
+        }
         ENDHLSL
 
         Pass
@@ -67,6 +85,7 @@ Shader "ZooWorld/Toon"
             Varyings Vert(Attributes input)
             {
                 Varyings output;
+                ApplyWiggle(input.positionOS.xyz, input.normalOS);
                 output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 output.positionCS = TransformWorldToHClip(output.positionWS);
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
@@ -128,6 +147,7 @@ Shader "ZooWorld/Toon"
                 float3 normalOS = dot(input.smoothNormalOS, input.smoothNormalOS) > 0.0001
                     ? input.smoothNormalOS
                     : input.normalOS;
+                ApplyWiggle(input.positionOS.xyz, normalOS);
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz)
                     + TransformObjectToWorldNormal(normalOS) * _OutlineWidth;
 
@@ -170,6 +190,7 @@ Shader "ZooWorld/Toon"
 
             float4 Vert(Attributes input) : SV_POSITION
             {
+                ApplyWiggle(input.positionOS.xyz, input.normalOS);
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
             #if _CASTING_PUNCTUAL_LIGHT_SHADOW
@@ -200,6 +221,8 @@ Shader "ZooWorld/Toon"
 
             float4 Vert(float4 positionOS : POSITION) : SV_POSITION
             {
+                float3 unusedNormalOS = float3(0, 1, 0);
+                ApplyWiggle(positionOS.xyz, unusedNormalOS);
                 return TransformObjectToHClip(positionOS.xyz);
             }
 
@@ -236,6 +259,7 @@ Shader "ZooWorld/Toon"
             Varyings Vert(Attributes input)
             {
                 Varyings output;
+                ApplyWiggle(input.positionOS.xyz, input.normalOS);
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 return output;
