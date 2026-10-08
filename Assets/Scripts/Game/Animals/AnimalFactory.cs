@@ -12,9 +12,9 @@ using ZooWorld.Core.Animals;
 using ZooWorld.Core.World;
 using Object = UnityEngine.Object;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
-    public class AnimalFactory
+    public class AnimalFactory : IDisposable
     {
         private readonly AnimalWorld _world;
         private readonly IPlayArea _area;

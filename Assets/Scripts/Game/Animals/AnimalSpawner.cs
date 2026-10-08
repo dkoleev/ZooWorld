@@ -7,7 +7,7 @@ using VContainer.Unity;
 using ZooWorld.Core;
 using ZooWorld.Core.World;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
     public class AnimalSpawner : ITickable
     {

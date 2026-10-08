@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using ZooWorld.Core.Movement;
 
-namespace ZooWorld.Game.Game.Movement
+namespace ZooWorld.Game.Movement
 {
     public abstract class MovementConfig : ScriptableObject
     {

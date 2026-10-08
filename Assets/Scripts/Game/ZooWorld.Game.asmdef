@@ -1,6 +1,6 @@
 {
     "name": "ZooWorld.Game",
-    "rootNamespace": "ZooWorld.Game",
+    "rootNamespace": "ZooWorld",
     "references": [
         "GUID:e1c2a05e2fa0b7748b818c087b19a200",
         "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",

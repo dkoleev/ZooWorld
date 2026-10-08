@@ -2,7 +2,7 @@
 using ZooWorld.Core;
 using ZooWorld.Core.World;
 
-namespace ZooWorld.Game.Game
+namespace ZooWorld.Game
 {
     public class CameraPlayArea : IPlayArea
     {

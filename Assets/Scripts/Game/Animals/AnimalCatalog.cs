@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
     public class AnimalCatalog : IDisposable
     {

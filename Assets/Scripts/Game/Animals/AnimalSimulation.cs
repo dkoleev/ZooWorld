@@ -3,7 +3,7 @@ using VContainer;
 using VContainer.Unity;
 using ZooWorld.Core;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
     public class AnimalSimulation : IFixedTickable
     {

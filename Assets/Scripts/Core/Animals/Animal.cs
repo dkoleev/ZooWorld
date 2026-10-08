@@ -2,7 +2,7 @@
 
 namespace ZooWorld.Core.Animals
 {
-    public class Animal : IEntity
+    public class Animal
     {
         /// <summary>Spawn sequence number: the lower it is, the longer the animal has lived.</summary>
         public int Id { get; }

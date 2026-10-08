@@ -3,9 +3,9 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using ZooWorld.Game.Game.Animals;
+using ZooWorld.Game.Animals;
 
-namespace ZooWorld.Game.Game
+namespace ZooWorld.Game
 {
     public class GameBootstrap : IAsyncStartable
     {

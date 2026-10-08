@@ -2,7 +2,7 @@
 using UnityEngine;
 using ZooWorld.Core.Animals;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
     [CreateAssetMenu(menuName = "Zoo World/Diet", fileName = "Diet")]
     public sealed class DietConfig : ScriptableObject, IDiet

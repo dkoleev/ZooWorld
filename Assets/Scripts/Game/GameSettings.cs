@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ZooWorld.Game.Game
+namespace ZooWorld.Game
 {
     [CreateAssetMenu(menuName = "Zoo World/Game Settings", fileName = "GameSettings")]
     public class GameSettings : ScriptableObject

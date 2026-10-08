@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
-using ZooWorld.Game.Game.Movement;
+using ZooWorld.Game.Movement;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
     [CreateAssetMenu(menuName = "Zoo World/Animal", fileName = "Animal")]
     public class AnimalConfig : ScriptableObject

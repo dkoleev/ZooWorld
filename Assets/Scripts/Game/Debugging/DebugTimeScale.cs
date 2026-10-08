@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ZooWorld.Game.Game.Debugging
+namespace ZooWorld.Game.Debugging
 {
     /// <summary>Debug-only speed switch: editor and Development Builds get it, release builds do not.</summary>
     public class DebugTimeScale : MonoBehaviour

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using ZooWorld.Core.Movement;
 
-namespace ZooWorld.Game.Game.Movement
+namespace ZooWorld.Game.Movement
 {
     [CreateAssetMenu(menuName = "Zoo World/Movement/Jump", fileName = "JumpMovement")]
     public class JumpMovementConfig : MovementConfig

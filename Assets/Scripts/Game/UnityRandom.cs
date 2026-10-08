@@ -1,6 +1,6 @@
 ﻿using ZooWorld.Core;
 
-namespace ZooWorld.Game.Game
+namespace ZooWorld.Game
 {
     public class UnityRandom : IRandom
     {

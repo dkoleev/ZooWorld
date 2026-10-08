@@ -5,9 +5,9 @@ using VContainer.Unity;
 using ZooWorld.Core;
 using ZooWorld.Core.Events;
 using ZooWorld.Core.World;
-using ZooWorld.Game.Game.Animals;
+using ZooWorld.Game.Animals;
 
-namespace ZooWorld.Game.Game
+namespace ZooWorld.Game
 {
     public class GameLifetimeScope : LifetimeScope
     {

@@ -3,7 +3,7 @@ using UnityEngine.Pool;
 using ZooWorld.Core;
 using ZooWorld.Core.Animals;
 
-namespace ZooWorld.Game.Game.Animals
+namespace ZooWorld.Game.Animals
 {
     [RequireComponent(typeof(Rigidbody))]
     public class AnimalView : MonoBehaviour, IEntityBody
