@@ -13,6 +13,7 @@ Shader "ZooWorld/Toon"
         _OutlineWidth ("Outline Width (world units)", Range(0, 0.1)) = 0.02
         _WiggleAmplitude ("Wiggle Amplitude", Range(0, 0.5)) = 0
         _WiggleFrequency ("Wiggle Frequency (rad per unit)", Range(0, 20)) = 4.65
+        [HideInInspector] _WigglePhase ("Wiggle Phase (distance travelled)", Float) = 0
     }
 
     SubShader
@@ -35,16 +36,15 @@ Shader "ZooWorld/Toon"
             half _OutlineWidth;
             half _WiggleAmplitude;
             float _WiggleFrequency;
+            float _WigglePhase;
         CBUFFER_END
 
-        // Bends the mesh sideways along a sine that stands still in the world: the phase comes from
-        // distance travelled, so the body slides through the wave and freezes when the animal stops.
+        // Bends the mesh sideways along a sine. _WigglePhase is the distance travelled, set per renderer
+        // by WigglePhase, so the body slides through the wave and freezes when the animal stops.
         void ApplyWiggle(inout float3 positionOS, inout float3 normalOS)
         {
-            float4x4 objectToWorld = GetObjectToWorldMatrix();
-            float travelled = dot(objectToWorld._m03_m13_m23, normalize(objectToWorld._m02_m12_m22));
             float s, c;
-            sincos((travelled + positionOS.z) * _WiggleFrequency, s, c);
+            sincos((_WigglePhase + positionOS.z) * _WiggleFrequency, s, c);
             positionOS.x += _WiggleAmplitude * s;
             // Inverse transpose of the shear x += f(z).
             normalOS.z -= _WiggleAmplitude * _WiggleFrequency * c * normalOS.x;
