@@ -2485,7 +2485,7 @@ GameObject:
   - component: {fileID: 881644973}
   - component: {fileID: 881644975}
   - component: {fileID: 881644974}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5032,7 +5032,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1982112677}
   - component: {fileID: 1982112676}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}

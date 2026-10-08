@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2631622107179280629}
   - component: {fileID: 1049705487306729622}
   - component: {fileID: 348712497158911602}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: _AnimalTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 984688077890759650}
   - component: {fileID: 5614560881796651339}
   - component: {fileID: 3331195965255976330}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +197,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7777154740241719069}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
