@@ -4,7 +4,7 @@
 ![URP](https://img.shields.io/badge/URP-17.6-2ea44f)
 ![DI](https://img.shields.io/badge/DI-VContainer-5865f2)
 ![Messaging](https://img.shields.io/badge/Messaging-MessagePipe-d9730d)
-![Tests](https://img.shields.io/badge/EditMode%20tests-35-brightgreen)
+![Tests](https://img.shields.io/badge/EditMode%20tests-46-brightgreen)
 
 A small Unity simulation. Every 1–2 seconds an animal appears on a top-down field, wanders, bumps into the others by physics, and eats or gets eaten according to a food chain.
 
@@ -21,6 +21,7 @@ A small Unity simulation. Every 1–2 seconds an animal appears on a top-down fi
 - [Tech stack](#tech-stack)
 - [Decisions and trade-offs](#decisions-and-trade-offs)
 - [Performance notes](#performance-notes)
+- [Simulation tool](#simulation-tool)
 - [Tests](#tests)
 - [Project layout](#project-layout)
 - [Running it](#running-it)
@@ -85,7 +86,9 @@ flowchart TD
     UI["<b>ZooWorld.UI</b><br/>MVP presenters and views"] --> Core
     Tests["<b>ZooWorld.Tests</b><br/>EditMode, NUnit"] --> Core
     Core["<b>ZooWorld.Core</b><br/>pure C#: rules, strategies, models"]
-    Editor["<b>ZooWorld.Editor</b><br/>mesh generator"]
+    Editor["<b>ZooWorld.Editor</b><br/>mesh generator, simulation tool"] --> Game
+    Editor --> Core
+    Tests --> Editor
     UI -. "child DI scope,<br/>parent named in the inspector" .-> Game
 ```
 
@@ -121,6 +124,7 @@ classDiagram
     }
     class Animal {
         Id
+        Species
         Diet
         IsAlive
         Tick(deltaTime)
@@ -301,7 +305,7 @@ An earlier version computed the phase in the shader as the object's world positi
 | **Localization** | Counter texts and "Tasty!" in English and Russian | Unity's own package; the UI reacts to a language switch without custom code |
 | **DOTween** | "Tasty!" pop and fade | A one-line sequence instead of a hand-written animation |
 | **uGUI + TextMeshPro** | HUD | Required by the brief |
-| **Unity Test Framework** | 35 EditMode tests on the logic | The logic is plain C#, so the tests need no scene |
+| **Unity Test Framework** | 46 EditMode tests on the logic | The logic is plain C#, so the tests need no scene |
 | **URP + custom HLSL shader** | Two-tone cel shading, rim light, outline, snake wiggle | A small hand-written shader; SRP Batcher compatible. See [Shaders](#shaders) |
 
 ## Decisions and trade-offs
@@ -333,9 +337,77 @@ An earlier version computed the phase in the shader as the object's world positi
 - **SRP Batcher.** One shader and three materials cover every object in the scene; colour comes from vertex data. Snakes are the exception: each carries a per-renderer wiggle phase, which takes it out of the batcher.
 - **Optional population cap** in `GameSettings` (200 by default, 0 turns it off). It is a safety net well above what the field settles at; if it is ever reached, spawning pauses and a warning says so.
 
+## Simulation tool
+
+A balancing tool for game designers: it plays the world forward much faster than real time, several times over, and reports how many animals of each species were eaten. Change a config, press Run, read the numbers a few seconds later.
+
+Open it with **Zoo World ▸ Simulation**.
+
+### Using it
+
+1. Open `Assets/Scenes/Game.unity`. The scene has to be saved: it is reloaded before every run.
+2. Set **Duration**, in ticks or in seconds of game time. One tick is one physics step, `Fixed Timestep` = 0.02 s, so 3000 ticks is one minute of play.
+3. Set **Runs**. Spawning and wandering are random, so one run is noisy; five to ten runs show whether a change moved the balance or only the dice.
+4. Press **Run**. The window enters Play Mode by itself, shows progress, and leaves Play Mode when the series is done. **Cancel** stops it and keeps the runs already finished.
+
+To compare two setups, edit the assets as usual (`GameSettings`, the movement and diet assets, the animal configs) and run again: every run starts from a freshly loaded scene and reads the configs anew.
+
+### Reading the result
+
+```
+10 runs x 3190 ticks (63.8 s), play area 20.7 x 8.2
+
+Species   Spawned   Eaten avg   min   max   Alive at end
+Frog      21.4      18.4        15    22    3
+Snake     20.4      16.2        12    22    4.2
+```
+
+| Column | Meaning |
+|---|---|
+| Spawned | Average per run; eaten plus still alive |
+| Eaten avg, min, max | Per run. A difference between two setups smaller than the min–max spread is noise |
+| Alive at end | Average population left when the run stops |
+
+Rows are per species (the `AnimalConfig` asset name), not per diet, so two species that share a diet stay apart. **Copy CSV** puts the table on the clipboard for a spreadsheet.
+
+The header shows the play area because it comes from the camera: a Game view with another aspect ratio is a field of another size, and its numbers are not comparable.
+
+### How it works
+
+Nothing is re-implemented: the tool drives the real scene, prefabs and colliders, so its numbers are the game's.
+
+```mermaid
+flowchart LR
+    W["<b>SimulationWindow</b><br/>inputs, progress, table"] --> R["<b>SimulationRunner</b><br/>state machine on<br/>EditorApplication.update"]
+    R -- "reload scene,<br/>prewarm pools" --> G["Game scene<br/>in Play Mode"]
+    R -- "world.Tick → Physics.Simulate → spawner.Step" --> G
+    G -- "AnimalDied" --> R
+    R --> P["<b>SimulationReport</b><br/>mean, min, max, CSV"]
+```
+
+- **The clock is stopped, physics is stepped by hand.** For the length of a series `Time.timeScale` is 0 and `Physics.simulationMode` is `Script`, so the game's own loop does nothing, and the runner calls `AnimalWorld.Tick`, `Physics.Simulate` and `AnimalSpawner.Step` in the order of a game frame. Batches of about 50 ms keep the editor responsive.
+- **A scene reload is the reset.** No class needs a `Reset` method, and no state leaks from one run into the next.
+- **Pools are prewarmed** (`AnimalFactory.PrewarmAsync`), so the first spawn of a species does not wait for Addressables and land a few ticks late.
+- **The HUD is switched off** while a series runs: it answers every meal with a tween, and tweens do not advance on a stopped clock.
+- **Settings always go back.** Finishing, cancelling, an error, closing the window and stopping Play Mode by hand all restore the time scale, the physics mode and `Run In Background`.
+
+On the development machine a run of 3000 ticks takes well under a second (about 22 000 ticks per second with the default settings). Checked against the game: 63.8 s of play at x1 ended with 21 prey and 15 predators eaten, inside the ranges in the table above.
+
+The whole tool is three files in `Assets/Scripts/Editor/Simulation/` and is not part of a player build.
+
+### Limits
+
+| Limit | Why |
+|---|---|
+| Runs are not reproducible by seed | PhysX is not deterministic between runs; the series average is the answer to that |
+| Needs Play Mode | Unity does not deliver collision callbacks in Edit Mode |
+| The spawner ticks per physics step here and per frame in the game | The average spawn rate is the same; a single spawn may land a frame apart |
+| Counts what is eaten per species, not who ate whom | Enough for the current two-species chain; `AnimalAte` already carries both sides if a matrix is needed |
+| The window was exercised through its runner by script; the buttons themselves got less use | If something in the window misbehaves, the runner underneath is the tested part |
+
 ## Tests
 
-35 EditMode tests cover the logic in `ZooWorld.Core`. They need no scene and no physics: bodies, randomness, the play area and the message broker are small fakes.
+46 EditMode tests cover the logic in `ZooWorld.Core` and the simulation tool's report. They need no scene and no physics: bodies, randomness, the play area and the message broker are small fakes.
 
 | Fixture | What it pins down |
 |---|---|
@@ -346,6 +418,8 @@ An earlier version computed the phase in the shader as the object's world positi
 | `AnimalWorldTests` | One death per collision even though Unity reports it twice; the dead neither eat nor die again; a failing listener does not corrupt the world |
 | `DeathStatsTests` | Counting per diet, including one it was never told about; change notification; unsubscription |
 | `AnimalTests` | An animal moves and faces along its wander direction |
+| `SimulationReportTests` | Mean, min and max per species across runs; a species missing from a run counts as zero there; CSV keeps a decimal point under a comma locale |
+| `SimulationRunnerTests` | Seconds convert to ticks, and a duration never drops below one tick |
 
 Run them from **Window ▸ General ▸ Test Runner ▸ EditMode**, or headless with the Editor closed:
 
@@ -363,7 +437,7 @@ Assets/
 │   ├── Core/       pure C#: Animals, Events, Movement, World
 │   ├── Game/       views, ScriptableObject configs, factory, pools, GameLifetimeScope
 │   ├── UI/         presenters, views, UiLifetimeScope
-│   ├── Editor/     LowPolyMeshBuilder, ZooMeshGenerator, prop placer window
+│   ├── Editor/     LowPolyMeshBuilder, ZooMeshGenerator, prop placer window, Simulation/
 │   └── Tests/      EditMode tests and fakes
 ├── Configs/        GameSettings, diet and movement assets, one AnimalConfig per species
 ├── Prefabs/        animals, UI label
