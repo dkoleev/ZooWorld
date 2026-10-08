@@ -10,6 +10,8 @@ A small Unity simulation. Every 1–2 seconds an animal appears on a top-down fi
 
 ![Gameplay](Docs/images/gameplay.png)
 
+![Gameplay](Docs/images/gameplay-video.mp4)
+
 ## Contents
 
 - [The brief, point by point](#the-brief-point-by-point)
