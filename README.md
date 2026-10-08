@@ -8,8 +8,6 @@
 
 A small Unity simulation. Every 1–2 seconds an animal appears on a top-down field, wanders, bumps into the others by physics, and eats or gets eaten according to a food chain.
 
-The original brief is in [`Docs/Zoo world_2026_Tech_Specs.pdf`](Docs/Zoo%20world_2026_Tech_Specs.pdf).
-
 ![Gameplay](Docs/images/gameplay.png)
 
 ## Contents
