@@ -13,13 +13,15 @@ namespace ZooWorld.UI
         [SerializeField] private DeathCounterView deathCounter;
         [SerializeField] private RectTransform labelsRoot;
         [SerializeField] private TastyLabelView tastyLabelPrefab;
+        [SerializeField] private LanguageToggleView languageToggle;
 
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponent(deathCounter);
-
+            builder.RegisterComponent(languageToggle);
+            
             builder.RegisterEntryPoint<DeathCounterPresenter>();
-
+            builder.RegisterEntryPoint<LanguageTogglePresenter>();
             builder.RegisterEntryPoint<TastyLabelPresenter>()
                 .WithParameter(tastyLabelPrefab)
                 .WithParameter(labelsRoot);
