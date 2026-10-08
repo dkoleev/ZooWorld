@@ -13,7 +13,7 @@ namespace ZooWorld.Core.Movement
             _acceleration = acceleration;
         }
 
-        public void Tick(IEntityBody body, Vector3 direction, float deltaTime)
+        public void Tick(IAnimalBody body, Vector3 direction, float deltaTime)
         {
             var horizontal = body.Velocity;
             horizontal.y = 0f;

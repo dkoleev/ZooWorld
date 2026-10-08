@@ -9,7 +9,7 @@ namespace ZooWorld.Tests.Fakes
         public int Ticks { get; private set; }
         public Vector3 LastDirection { get; private set; }
 
-        public void Tick(IEntityBody target, Vector3 direction, float deltaTime)
+        public void Tick(IAnimalBody target, Vector3 direction, float deltaTime)
         {
             Ticks++;
             LastDirection = direction;

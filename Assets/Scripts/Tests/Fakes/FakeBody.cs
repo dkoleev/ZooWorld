@@ -4,7 +4,7 @@ using ZooWorld.Core;
 
 namespace ZooWorld.Tests.Fakes
 {
-    internal sealed class FakeBody : IEntityBody
+    internal sealed class FakeBody : IAnimalBody
     {
         public Vector3 Position { get; }
         public Vector3 DisplayPosition { get; }

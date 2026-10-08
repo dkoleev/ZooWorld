@@ -9,13 +9,13 @@ namespace ZooWorld.Core.Animals
 
         public IDiet Diet { get; }
         public bool IsAlive { get; private set; } = true;
-        public IEntityBody Body => _body;
+        public IAnimalBody Body => _body;
 
-        private readonly IEntityBody _body;
+        private readonly IAnimalBody _body;
         private readonly IMovement _movement;
         private readonly WanderDirection _wander;
 
-        public Animal(int id, IDiet diet, IEntityBody body, IMovement movement, WanderDirection wander)
+        public Animal(int id, IDiet diet, IAnimalBody body, IMovement movement, WanderDirection wander)
         {
             Id = id;
             Diet = diet;

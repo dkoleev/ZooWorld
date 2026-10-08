@@ -19,7 +19,7 @@ namespace ZooWorld.Core.Movement
             _timeLeft = interval;
         }
 
-        public void Tick(IEntityBody target, Vector3 direction, float deltaTime)
+        public void Tick(IAnimalBody target, Vector3 direction, float deltaTime)
         {
             _timeLeft -= deltaTime;
             if (_timeLeft > 0f || !target.IsGrounded)

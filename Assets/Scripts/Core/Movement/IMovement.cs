@@ -4,6 +4,6 @@ namespace ZooWorld.Core.Movement
 {
     public interface IMovement
     {
-        void Tick(IEntityBody target, Vector3 direction, float deltaTime);
+        void Tick(IAnimalBody target, Vector3 direction, float deltaTime);
     }
 }

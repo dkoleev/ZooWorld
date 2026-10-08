@@ -2,7 +2,7 @@
 
 namespace ZooWorld.Core
 {
-    public interface IEntityBody
+    public interface IAnimalBody
     {
         public Vector3 Position { get; }
         public Vector3 DisplayPosition { get; }

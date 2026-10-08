@@ -6,7 +6,7 @@ using ZooWorld.Core.Animals;
 namespace ZooWorld.Game.Animals
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class AnimalView : MonoBehaviour, IEntityBody
+    public class AnimalView : MonoBehaviour, IAnimalBody
     {
         private const float TurnSharpness = 0.2f;
 
