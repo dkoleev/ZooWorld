@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 689694bf4fe14f279e6b8fb93668575b, type: 3}
-  m_Name: Pray
+  m_Name: Prey
   m_EditorClassIdentifier: ZooWorld.Game::ZooWorld.Game.Game.Animals.DietConfig
-  id: pray
+  id: prey
   eats: []
