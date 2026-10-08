@@ -28,7 +28,7 @@ namespace ZooWorld.Game.Game.Animals
         public Vector3 DisplayPosition => transform.position;
         public Vector3 Velocity => body.linearVelocity;
 
-        public bool IsGrounded => Physics.Raycast(body.position, Vector3.down, groundCheckDistance);
+        public bool IsGrounded => Physics.Raycast(body.worldCenterOfMass, Vector3.down, groundCheckDistance);
 
         public void AddVelocity(Vector3 delta) => body.AddForce(delta, ForceMode.VelocityChange);
 
@@ -58,5 +58,22 @@ namespace ZooWorld.Game.Game.Animals
             if (collision.rigidbody != null && collision.rigidbody.TryGetComponent(out AnimalView other))
                 _world.Collide(Animal, other.Animal);
         }
+
+#if UNITY_EDITOR
+        // The IsGrounded ray of the selected animal: green up to the hit point, red when it reaches nothing.
+        private void OnDrawGizmosSelected()
+        {
+            if (body == null)
+                return;
+
+            var origin = body.worldCenterOfMass;
+            var grounded = Physics.Raycast(origin, Vector3.down, out var hit, groundCheckDistance);
+            var end = grounded ? hit.point : origin + Vector3.down * groundCheckDistance;
+
+            Gizmos.color = grounded ? Color.green : Color.red;
+            Gizmos.DrawLine(origin, end);
+            Gizmos.DrawSphere(end, 0.03f);
+        }
+#endif
     }
 }
