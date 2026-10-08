@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ZooWorld.Editor
+namespace ZooWorld.Editor.Placer
 {
     internal class PropPlacerWindow : EditorWindow
     {

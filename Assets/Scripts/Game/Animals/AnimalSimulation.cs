@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 using ZooWorld.Core;
 
@@ -8,8 +9,15 @@ namespace ZooWorld.Game.Game.Animals
     {
         private readonly AnimalWorld _world;
 
-        public AnimalSimulation(AnimalWorld world) => _world = world;
+        [Inject]
+        public AnimalSimulation(AnimalWorld world)
+        {
+            _world = world;
+        }
 
-        public void FixedTick() => _world.Tick(Time.fixedDeltaTime);
+        public void FixedTick()
+        {
+            _world.Tick(Time.fixedDeltaTime);
+        }
     }
 }

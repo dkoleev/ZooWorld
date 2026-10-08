@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 using ZooWorld.Core;
 using ZooWorld.Core.World;
@@ -19,6 +20,7 @@ namespace ZooWorld.Game.Game.Animals
         private IReadOnlyList<AnimalConfig> _configs = Array.Empty<AnimalConfig>();
         private bool _capReported;
 
+        [Inject]
         public AnimalSpawner(AnimalFactory factory, AnimalWorld world, IPlayArea area, IRandom random,
             GameSettings settings)
         {

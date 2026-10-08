@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MessagePipe;
+using VContainer;
 using ZooWorld.Core.Events;
 
 namespace ZooWorld.Core
@@ -13,7 +14,11 @@ namespace ZooWorld.Core
         private readonly Dictionary<string, int> _deaths = new();
         private readonly IDisposable _subscription;
 
-        public DeathStats(ISubscriber<AnimalDiedEvent> died) => _subscription = died.Subscribe(this);
+        [Inject]
+        public DeathStats(ISubscriber<AnimalDiedEvent> died)
+        {
+            _subscription = died.Subscribe(this);
+        }
 
         public void Handle(AnimalDiedEvent message)
         {

@@ -47,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa6154a3ef70459c9990f0e148fe4a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ZooWorld.Game::ZooWorld.Game.Game.Animals.AnimalView
-  _body: {fileID: 1049705487306729622}
-  _visual: {fileID: 7777154740241719069}
-  _groundCheckDistance: 0.5
+  body: {fileID: 1049705487306729622}
+  visual: {fileID: 7777154740241719069}
+  groundCheckDistance: 0.5
 --- !u!54 &1049705487306729622
 Rigidbody:
   m_ObjectHideFlags: 0

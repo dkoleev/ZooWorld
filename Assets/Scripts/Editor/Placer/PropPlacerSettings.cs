@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace ZooWorld.Editor
+namespace ZooWorld.Editor.Placer
 {
     [FilePath("UserSettings/PropPlacer.asset", FilePathAttribute.Location.ProjectFolder)]
     internal class PropPlacerSettings : ScriptableSingleton<PropPlacerSettings>

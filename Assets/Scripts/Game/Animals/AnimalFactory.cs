@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using VContainer;
 using ZooWorld.Core;
 using ZooWorld.Core.Animals;
 using ZooWorld.Core.World;
@@ -27,6 +28,7 @@ namespace ZooWorld.Game.Game.Animals
 
         private int _nextId;
 
+        [Inject]
         public AnimalFactory(AnimalWorld world, IPlayArea area, IRandom random, GameSettings settings)
         {
             _world = world;

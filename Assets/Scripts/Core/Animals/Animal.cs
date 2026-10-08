@@ -35,6 +35,7 @@ namespace ZooWorld.Core.Animals
                 return;
 
             var direction = _wander.Tick(_body.Position, deltaTime);
+            _body.Face(direction);
             _movement.Tick(_body, direction, deltaTime);
         }
     }
