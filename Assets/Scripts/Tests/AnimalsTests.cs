@@ -20,8 +20,8 @@ namespace ZooWorld.Tests
             animal.Tick(0.02f);
 
             // FakeRandom's default picks angle 0, which is +X.
-            VectorAssert.AreEqual(Vector3.right, movement.LastDirection);
-            VectorAssert.AreEqual(Vector3.right, body.Facing);
+            CommonTestUtils.AreEqual(Vector3.right, movement.LastDirection);
+            CommonTestUtils.AreEqual(Vector3.right, body.Facing);
         }
     }
 }

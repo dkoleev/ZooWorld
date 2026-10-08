@@ -9,7 +9,7 @@ namespace ZooWorld.Tests.Fakes
         public Vector3 Position { get; }
         public Vector3 DisplayPosition { get; }
         public Vector3 Velocity { get; set; }
-        public bool IsGrounded { get; }
+        public bool IsGrounded { get; set; } = true;
         public Vector3 Facing { get; private set; }
         public bool Despawned { get; private set; }
 

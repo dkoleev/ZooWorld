@@ -9,6 +9,7 @@ namespace ZooWorld.Core.Animals
 
         public IDiet Diet { get; }
         public bool IsAlive { get; private set; } = true;
+        public IEntityBody Body => _body;
 
         private readonly IEntityBody _body;
         private readonly IMovement _movement;
